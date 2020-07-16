@@ -73,23 +73,37 @@ class LocalDatabase:
         
         self.close_database()
         
-    def insert_data(self, abbreviation, id_place, id_uid_type, value, time):
-        
+    def find_id_sensor(self, place_id, id_uid_type, abbreviation):
         if self._conn == None:
             self.connect_database()
             
         self._cursor.execute(
-            f'SELECT id_sensor FROM sensor WHERE id_place={id_place} AND id_uid_type={id_uid_type} AND abbreviation={abbreviation}'
+            f'SELECT id_sensor FROM sensor WHERE id_place={place_id} AND id_uid_type={id_uid_type} AND abbreviation="{abbreviation}"'
             )
         
-        id_sensor = self._cursor.fetchone()
-        print(id_sensor)
+        result = self._cursor.fetchone()
+        
+        self.close_database()
+        
+        try:
+            return int(result[0])
+        except:
+            return False
+    
+    def insert_data(self, abbreviation, id_place, id_uid_type, value, time):
+        
+        if self._conn == None:
+            self.connect_database()
+        
+        id_sensor = self.find_id_sensor(id_place, id_uid_type, abbreviation)
             
-        self._cursor.execute(
-            f'INSERT INTO data (id_place, abbreviation, description) VALUES ({self.place_id}, "{self.place_abbreviation}", "{self.place_description}")'
-            )
-        
-        #PASS
+        if id_sensor:
+            self._cursor.execute(
+                f'INSERT INTO data (id_place, abbreviation, description) VALUES ({self.place_id}, "{self.place_abbreviation}", "{self.place_description}")'
+                )
+            return True
+        else:
+            return False
         
     def import_parameters(self):
         

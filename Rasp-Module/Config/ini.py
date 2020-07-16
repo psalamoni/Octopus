@@ -8,6 +8,7 @@ This is a temporary script file.
 import serial
 import bluetoothctl
 import time
+import dbmanager as dbm
 
 class ConnectionBT():
     
@@ -26,40 +27,39 @@ class ConnectionBT():
         
     def connect_sensors(self):
         
-        self._btctl.start_scan()
-        self._btctl.pair('00:18:E4:40:00:06','0000')
-        
         try:
+            self._btctl.start_scan()
+            self._btctl.pair('00:18:E4:40:00:06','0000')
             self._sp = serial.Serial(port='/dev/rfcomm0', baudrate=9600, bytesize=8, timeout=10, stopbits=serial.STOPBITS_ONE)
-            sp_txt = self._sp.readline().decode("utf-8")
+            self._sp.readline().decode("utf-8")
         except:
-            print("Offline")
             return False
         else:
-            print(".")
             return True
         
     def get_data(self):
         
         bt_output=['']
+        i=0
         
-        while len(bt_output)<2:
+        while (len(bt_output) < 5) or ('' in bt_output) or (None in bt_output) or (i<50):
             try:
                 sp_txt = self._sp.readline().decode("utf-8")
+                bt_output = sp_txt.replace('\r\n','').split(':')
             except:
                 print("Connection Lost")
-                break
-            bt_output = sp_txt.replace('\r\n','').split(':')
-            print(bt_output)
-            print(sp_txt)
-            #TIMEOUT
+                return False
+            i+=1
         
-        return sp_txt
+        if i>=50:
+            return True
+        else:
+            return bt_output
     
     def send_confirmation(self):
         
-        msg = self._btctl.parse_device_info('OK TESTE')
-        #self._sp.write(msg)
+        msg = self._btctl.parse_device_info('J')
+        self._sp.write(msg)
         
 
 if __name__ == '__main__':
@@ -71,4 +71,13 @@ if __name__ == '__main__':
         
         if cbt.connect_sensors():
             data = cbt.get_data()
-            cbt.send_confirmation()
+            
+            if data == False:
+                continue
+            elif data == True:
+                cbt.send_confirmation()
+                cbt.remove_sensors()
+            else:
+                if dbm.LocalDatabase.insert_data(data[0],data[1],data[2],data[3],data[4]):
+                    cbt.send_confirmation()
+                    cbt.remove_sensors()

@@ -26,6 +26,8 @@ class Setup:
     def create_directory(self):
         self.send('sudo mkdir /usr/bin/octopus/')
         self.send('sudo cp Config/ini.py /usr/bin/octopus/')
+        self.send('sudo cp Config/config.py /usr/bin/octopus/')
+        self.send('sudo cp Config/dbmanager.py /usr/bin/octopus/')
         self.send('sudo cp Config/bluetoothctl.py /usr/bin/octopus/')
         self.send('sudo cp config.json /usr/bin/octopus/')
         self.send('sudo cp fdb.json /usr/bin/octopus/')  

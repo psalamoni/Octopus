@@ -64,7 +64,8 @@ class ConnectionBT():
     def send_confirmation(self):
         
         msg = self._btctl.parse_device_info('J')
-        self._sp.write(msg)
+        for _ in range(10):
+            self._sp.write(msg)
         
 
 if __name__ == '__main__':

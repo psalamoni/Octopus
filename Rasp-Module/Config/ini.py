@@ -75,6 +75,7 @@ if __name__ == '__main__':
             if data == False:
                 continue
             elif data == True:
+                print(f"Sending this:{data}")
                 cbt.send_confirmation()
                 cbt.remove_sensors()
             else:

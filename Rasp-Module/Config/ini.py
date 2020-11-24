@@ -42,14 +42,18 @@ class ConnectionBT():
         bt_output=['']
         i=0
         
-        while (len(bt_output) < 5) or ('' in bt_output) or (None in bt_output) or (i<50):
+        while ((len(bt_output) != 5) or ('' in bt_output) or (None in bt_output)) and (i<50):
             try:
                 sp_txt = self._sp.readline().decode("utf-8")
-                bt_output = sp_txt.replace('\r\n','').split(':')
-                print(f"data: {bt_output}")
             except:
                 print("Connection Lost")
                 return False
+            try:
+                bt_output = sp_txt.replace('\r\n','').split(':')
+                bt_output[1:5] = map(int,bt_output[1:5])
+                print(f"data: {bt_output}")
+            except:
+                bt_output = ''
             i+=1
         
         if i>=50:

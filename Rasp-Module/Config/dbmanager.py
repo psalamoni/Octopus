@@ -90,7 +90,7 @@ class LocalDatabase:
         except:
             return False
     
-    def insert_data(self, abbreviation, id_place, id_uid_type, value, time):
+    def insert_data(self, abbreviation, id_place, id_uid_type, time, value):
         
         if self._conn == None:
             self.connect_database()

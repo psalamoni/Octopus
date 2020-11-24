@@ -46,6 +46,7 @@ class ConnectionBT():
             try:
                 sp_txt = self._sp.readline().decode("utf-8")
                 bt_output = sp_txt.replace('\r\n','').split(':')
+                print(f"data: {bt_output}")
             except:
                 print("Connection Lost")
                 return False

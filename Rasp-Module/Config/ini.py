@@ -65,9 +65,10 @@ class ConnectionBT():
     def send_confirmation(self):
         
         msg = self._btctl.parse_device_info('J')
-        print('true3')
-        for _ in range(10):
+        print('Sending J')
+        for _ in range(3):
             self._sp.write(msg)
+            time.sleep(3)
         
 
 if __name__ == '__main__':
@@ -89,7 +90,6 @@ if __name__ == '__main__':
                 data[3] = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()-data[3]/1000))
                 print(f"Sending this:{data}")
                 if dbm.LocalDatabase().insert_data(data[0],data[1],data[2],data[3],data[4]):
-                    print('true2')
                     cbt.send_confirmation()
                     cbt.remove_sensors()
                 else:

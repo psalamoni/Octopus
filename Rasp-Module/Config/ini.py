@@ -50,7 +50,8 @@ class ConnectionBT():
                 return False
             try:
                 bt_output = sp_txt.replace('\r\n','').split(':')
-                bt_output[1:5] = map(int,bt_output[1:5])
+                bt_output[1:4] = map(int,bt_output[1:4])
+                bt_output[5] = float(bt_output[5])
                 print(f"data: {bt_output}")
             except:
                 bt_output = ''

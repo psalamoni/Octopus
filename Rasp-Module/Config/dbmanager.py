@@ -92,10 +92,10 @@ class LocalDatabase:
     
     def insert_data(self, abbreviation, id_place, id_uid_type, time, value):
         
+        id_sensor = self.find_id_sensor(id_place, id_uid_type, abbreviation)
+        
         if self._conn == None:
             self.connect_database()
-        
-        id_sensor = self.find_id_sensor(id_place, id_uid_type, abbreviation)
             
         if id_sensor:
             self._cursor.execute(

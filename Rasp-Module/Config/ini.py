@@ -85,6 +85,9 @@ if __name__ == '__main__':
                 cbt.remove_sensors()
             else:
                 print(f"Sending this:{data}")
+                data[3] = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()-data[3]))
                 if dbm.LocalDatabase().insert_data(data[0],data[1],data[2],data[3],data[4]):
                     cbt.send_confirmation()
                     cbt.remove_sensors()
+                else:
+                    print("Insert Error")

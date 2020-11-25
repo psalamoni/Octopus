@@ -99,7 +99,7 @@ class LocalDatabase:
             
         if id_sensor:
             self._cursor.execute(
-                f'INSERT INTO data (id_place, abbreviation, description) VALUES ({self.place_id}, "{self.place_abbreviation}", "{self.place_description}")'
+                f'INSERT INTO data (id_sensor, value, dtime, description, valid) VALUES ("{id_sensor}", "{value}", {time}, "", 0)'
                 )
             return True
         else:

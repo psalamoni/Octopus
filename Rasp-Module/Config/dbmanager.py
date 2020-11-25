@@ -101,6 +101,7 @@ class LocalDatabase:
             self._cursor.execute(
                 f'INSERT INTO data (id_sensor, value, dtime, description, valid) VALUES ({id_sensor}, {value}, "{time}", "", 0)'
                 )
+            print('true1')
             return True
         else:
             return False

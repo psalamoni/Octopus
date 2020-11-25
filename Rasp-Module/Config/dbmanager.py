@@ -93,17 +93,19 @@ class LocalDatabase:
     def insert_data(self, abbreviation, id_place, id_uid_type, time, value):
         
         id_sensor = self.find_id_sensor(id_place, id_uid_type, abbreviation)
-        
-        if self._conn == None:
-            self.connect_database()
             
         if id_sensor:
+            if self._conn == None:
+                self.connect_database()
+            
             self._cursor.execute(
                 f'INSERT INTO data (id_sensor, value, dtime, description, valid) VALUES ({id_sensor}, {value}, "{time}", "", 0)'
                 )
-            print('true1')
+            
+            self.close_database()
             return True
         else:
+            self.close_database()
             return False
         
     def import_parameters(self):
@@ -123,7 +125,11 @@ class LocalDatabase:
         self._cursor.execute(
             f'INSERT INTO place (id_place, abbreviation, description) VALUES ({self.place_id}, "{self.place_abbreviation}", "{self.place_description}")'
             )
+        
+        self.close_database()
+        
         self._fdb.register_places(self.place_id, self.place_abbreviation, self.place_description)
+        
     
     def register_sensors(self):
         

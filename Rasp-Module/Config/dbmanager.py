@@ -238,15 +238,6 @@ class ForeignDatabase:
     
     def insert_data(self, id_sensor, value, time, description, valid):
         
-        if self._conn == None:
-                self.connect_database()
-            
-        self._cursor.execute(
-            f'INSERT INTO data (id_sensor, value, dtime, description, valid) VALUES ({id_sensor}, {value}, "{time}", "{description}", {valid})'
-            )
-        
-        self.close_database()
-        
         try:
             
             id_sensor = int(id_sensor)
@@ -257,7 +248,7 @@ class ForeignDatabase:
                 self.connect_database()
             
             self._cursor.execute(
-                f'INSERT INTO data (id_sensor, value, dtime, description, valid) VALUES ({id_sensor}, {value}, "{time}", "{description}", {valid})'
+                f'INSERT INTO {self.bd_name}.data (id_sensor, value, dtime, description, valid) VALUES ({id_sensor}, {value}, "{time}", "{description}", {valid})'
                 )
             
             self.close_database()

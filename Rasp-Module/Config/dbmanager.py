@@ -99,13 +99,12 @@ class LocalDatabase:
                 self.connect_database()
             
             self._cursor.execute(
-                f'INSERT INTO data (id_sensor, value, dtime, description, valid) VALUES ({id_sensor}, {value}, "{time}", "", 0)'
+                f'INSERT INTO data (id_sensor, value, dtime, description, valid) VALUES ({id_sensor}, {value}, "{time}", "", 1)'
                 )
             
             self.close_database()
             return True
         else:
-            self.close_database()
             return False
         
     def import_parameters(self):
@@ -119,32 +118,69 @@ class LocalDatabase:
         
         self.import_parameters()
         
-        if self._conn == None:
-            self.connect_database()
+        if self._fdb.register_places(self.place_id, self.place_abbreviation, self.place_description):
         
-        self._cursor.execute(
-            f'INSERT INTO place (id_place, abbreviation, description) VALUES ({self.place_id}, "{self.place_abbreviation}", "{self.place_description}")'
-            )
+            if self._conn == None:
+                self.connect_database()
+            
+            self._cursor.execute(
+                f'INSERT INTO place (id_place, abbreviation, description) VALUES ({self.place_id}, "{self.place_abbreviation}", "{self.place_description}")'
+                )
+            
+            self.close_database()
         
-        self.close_database()
-        
-        self._fdb.register_places(self.place_id, self.place_abbreviation, self.place_description)
+        else:
+            print('Couldn\'t register place in Foreign Database')
         
     
     def register_sensors(self):
         
         self.import_parameters()
+            
+        for sensor in self.sensors:
+            id_uid_type, abbreviation, sensor_type, description = sensor
+            
+            id_sensor = self._fdb.register_sensors(self.place_id, id_uid_type, abbreviation, sensor_type, description)
+            
+            if id_sensor:
+                if self._conn == None:
+                    self.connect_database()
+            
+                self._cursor.execute(
+                    f'INSERT INTO sensor (id_sensor, id_place, id_uid_type, abbreviation, sensor_type, description) VALUES ({id_sensor}, {self.place_id}, {id_uid_type}, "{abbreviation}", "{sensor_type}", "{description}")'
+                    )
+            
+                self.close_database()
+            else:
+                print('Couldn\'t register sensor in Foreign Database')
+        
+    def get_data(self):
         
         if self._conn == None:
             self.connect_database()
             
-        for sensor in self.sensors:
-            id_uid_type, abbreviation, sensor_type, description = sensor
-            id_sensor = self._fdb.register_sensors(self.place_id, id_uid_type, abbreviation, sensor_type, description)
-            self._cursor.execute(
-                f'INSERT INTO sensor (id_sensor, id_place, id_uid_type, abbreviation, sensor_type, description) VALUES ({id_sensor}, {self.place_id}, {id_uid_type}, "{abbreviation}", "{sensor_type}", "{description}")'
-                )
+        self._cursor.execute(
+            'SELECT * FROM data'
+            )
+        
+        result = self._cursor.fetchall()
+        
+        self.close_database()
+        
+        try:
+            return result
+        except:
+            return False
+        
+    def del_data(self, id:int):
+        
+        if self._conn == None:
+            self.connect_database()
             
+        self._cursor.execute(
+            f'DELETE FROM data WHERE id_data={id}'
+            )
+        
         self.close_database()
         
 class ForeignDatabase:
@@ -157,18 +193,24 @@ class ForeignDatabase:
     def connect_database(self):
         """Connect database"""
         
-        c = json.load(open('/usr/bin/octopus/fdb.json','r'))
-        for key, value in c.items():
-            setattr(self, key, value)
+        try:
         
-        self._conn = mysql.connector.connect(
-            host=self.host,
-            user=self.user,
-            password=self.pswd
-            )
-        self._cursor = self._conn.cursor()
+            c = json.load(open('/usr/bin/octopus/fdb.json','r'))
+            for key, value in c.items():
+                setattr(self, key, value)
+            
+            self._conn = mysql.connector.connect(
+                host=self.host,
+                user=self.user,
+                password=self.pswd
+                )
+            self._cursor = self._conn.cursor()
         
-        return self._cursor
+            return self._cursor
+        
+        except:
+            print('Couldn\'t connect to Foreign Database, please check your internet connection and/or Database setup')
+            return False
         
     def close_database(self):
         
@@ -194,28 +236,51 @@ class ForeignDatabase:
         
         return int(result[0])
     
+    def insert_data(self, id_sensor, value, time, description, valid):
+        
+        try:
+            if self._conn == None:
+                self.connect_database()
+            
+            self._cursor.execute(
+                f'INSERT INTO data (id_sensor, value, dtime, description, valid) VALUES ({id_sensor}, {value}, "{time}", "{description}", {valid})'
+                )
+            
+            self.close_database()
+            return True
+        except:
+            return False
+    
     def register_places(self, place_id, place_abbreviation, place_description):
         
-        if self._conn == None:
-            self.connect_database()
-
-        self._cursor.execute(
-            f'INSERT INTO {self.bd_name}.place (id_place, abbreviation, description) VALUES ({place_id}, "{place_abbreviation}", "{place_description}")'
-            )
+        try:
+            if self._conn == None:
+                self.connect_database()
+    
+            self._cursor.execute(
+                f'INSERT INTO {self.bd_name}.place (id_place, abbreviation, description) VALUES ({place_id}, "{place_abbreviation}", "{place_description}")'
+                )
+                
+            self.close_database()
             
-        self.close_database()
-        
-        return
+            return True
+        except:
+            return False
     
     def register_sensors(self, place_id, id_uid_type, abbreviation, sensor_type, description):
         
-        if self._conn == None:
-            self.connect_database()
-
-        self._cursor.execute(
-            f'INSERT INTO {self.bd_name}.sensor (id_place, id_uid_type, abbreviation, sensor_type, description) VALUES ("{place_id}", "{id_uid_type}", "{abbreviation}", "{sensor_type}", "{description}")'
-            )
+        try:
+            if self._conn == None:
+                self.connect_database()
+    
+            self._cursor.execute(
+                f'INSERT INTO {self.bd_name}.sensor (id_place, id_uid_type, abbreviation, sensor_type, description) VALUES ("{place_id}", "{id_uid_type}", "{abbreviation}", "{sensor_type}", "{description}")'
+                )
+                
+            self.close_database()
             
-        self.close_database()
-        
-        return self.find_id_sensor(place_id,id_uid_type,abbreviation)
+            return self.find_id_sensor(place_id,id_uid_type,abbreviation)
+        except:
+            return False
+    
+    

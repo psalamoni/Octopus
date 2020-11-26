@@ -21,7 +21,7 @@ class DBsync():
         self._ldb = dbm.LocalDatabase()
         self._fdb = dbm.ForeignDatabase()
         
-    def getLocalData(self):
+    def syncDB(self):
         
         data = self._ldb.get_data()
         
@@ -35,4 +35,9 @@ class DBsync():
                     return
                 
         print('You\'re safe. Your data is up-to-date in Foreign Database!')
-            
+
+if __name__ == '__main__':
+    
+    dbs = DBsync()
+    
+    dbs.syncDB()

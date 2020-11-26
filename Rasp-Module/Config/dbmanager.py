@@ -239,6 +239,11 @@ class ForeignDatabase:
     def insert_data(self, id_sensor, value, time, description, valid):
         
         try:
+            
+            id_sensor = int(id_sensor)
+            value = float(value)
+            valid = int(valid)
+            
             if self._conn == None:
                 self.connect_database()
             

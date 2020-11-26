@@ -238,6 +238,8 @@ class ForeignDatabase:
     
     def insert_data(self, id_sensor, value, time, description, valid):
         
+        print(id_sensor, value, time, description, valid)
+        
         if self._conn == None:
             self.connect_database()
         

@@ -27,8 +27,8 @@ class DBsync():
         
         if data:
             
-            for i in data:
-                if self._fdb.insert_data(data[1],data[2],data[3],data[4],data[5]):
+            for sdata in data:
+                if self._fdb.insert_data(sdata[1],sdata[2],sdata[3],sdata[4],sdata[5]):
                     self._ldb.del_data(data[0])
                 else:
                     print('Couldn\'t insert data in Foreign Database, please check internet connection and/or Database Setup')

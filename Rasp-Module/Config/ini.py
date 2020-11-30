@@ -69,6 +69,7 @@ class ConnectionBT():
         for _ in range(50):
             try:
                 self._sp.write(b'J')
+                self._sp.write(b'0')
             except:
                 break
 

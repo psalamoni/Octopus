@@ -80,6 +80,7 @@ if __name__ == '__main__':
     while True:
         
         if cbt.connect_sensors():
+            print('.')
             print('Connected')
             data = cbt.get_data()
             
@@ -98,5 +99,6 @@ if __name__ == '__main__':
                     print("Insert Error")
                     
             cbt.remove_sensors()
+            print('.')
         else:
             print('.')

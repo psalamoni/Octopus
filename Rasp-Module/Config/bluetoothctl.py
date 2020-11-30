@@ -22,6 +22,10 @@ class Bluetoothctl:
         """Start bluetooth scanning process."""
         self.send("scan on", 3)
 
+    def stop_scan(self):
+        """Stop bluetooth scanning process."""
+        self.send("scan off", 3)
+
     def make_discoverable(self):
         """Make device discoverable."""
         self.send("discoverable on")

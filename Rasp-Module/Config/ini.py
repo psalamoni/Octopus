@@ -16,13 +16,13 @@ class ConnectionBT():
         
         #Attributes
         self._btctl = bluetoothctl.Bluetoothctl()
-        self._btctl.start_scan()
         self._btctl.sp_init('00:18:E4:40:00:06')
         self._sp = None
         
     def remove_sensors(self):
         try:
             self._btctl.remove('00:18:E4:40:00:06')
+            self._btctl.stop_scan()
             print('Disconnected')
         except:
             pass
@@ -30,6 +30,7 @@ class ConnectionBT():
     def connect_sensors(self):
         
         try:
+            self._btctl.start_scan()
             self._btctl.pair('00:18:E4:40:00:06','0000')
             self._sp = serial.Serial(port='/dev/rfcomm0', baudrate=9600, bytesize=8, timeout=10, stopbits=serial.STOPBITS_ONE)
             self._sp.readline().decode("utf-8")

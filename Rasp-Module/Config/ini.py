@@ -66,14 +66,14 @@ class ConnectionBT():
         
         #msg = self._btctl.parse_device_info('J')
         print('Sending J')
-        for _ in range(20):
+        self._sp.write(b'J')
+        while(True):
             try:
-                self._sp.write(b'J\r\n')
+                self._sp.write(b'')
                 print('.', end='')
-                time.sleep(1)
             except:
                 break
-            print('.blue')
+        print('.')
 
 if __name__ == '__main__':
     

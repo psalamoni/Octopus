@@ -66,10 +66,10 @@ class ConnectionBT():
         
         #msg = self._btctl.parse_device_info('J')
         print('Sending J')
-        for _ in range(50):
+        for _ in range(20):
             try:
                 self._sp.write(b'J')
-                self._sp.write(b'0')
+                time.sleep(1)
             except:
                 break
 

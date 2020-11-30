@@ -67,8 +67,10 @@ class ConnectionBT():
         #msg = self._btctl.parse_device_info('J')
         print('Sending J')
         for _ in range(50):
-            self._sp.write(b'J')
-        
+            try:
+                self._sp.write(b'J')
+            except:
+                break
 
 if __name__ == '__main__':
     
@@ -93,3 +95,5 @@ if __name__ == '__main__':
                     cbt.remove_sensors()
                 else:
                     print("Insert Error")
+        else:
+            print('Sensors are offline')

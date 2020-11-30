@@ -67,7 +67,7 @@ class ConnectionBT():
         #msg = self._btctl.parse_device_info('J')
         print('Sending J')
         self._sp.write(b'J')
-        while(True):
+        for _ in range(10):
             try:
                 self._sp.write(b'')
                 print('.', end='')

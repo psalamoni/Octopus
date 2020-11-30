@@ -64,11 +64,10 @@ class ConnectionBT():
     
     def send_confirmation(self):
         
-        msg = self._btctl.parse_device_info('J')
+        #msg = self._btctl.parse_device_info('J')
         print('Sending J')
-        for _ in range(3):
-            self._sp.write(msg)
-            time.sleep(3)
+        for _ in range(50):
+            self._sp.write(b'J')
         
 
 if __name__ == '__main__':

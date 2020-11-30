@@ -3,8 +3,8 @@
     "place_abbreviation" : "RRT",
     "place_description" : "Coordenação do campus",
     "sensors" : [
-        ["01", "JAN", "JANELA", "Janela do canto direito da sala"],
-        ["02", "JAN", "JANELA", "Janela do canto esquerdo da sala"],
-        ["01", "LAM", "LAMPADA", "Lampada central do ambiente"]
+        ["01", "JAN", "JANELA", "Janela do canto esquerdo da sala"],
+        ["01", "LAM", "LAMPADA", "Lampada central do ambiente"],
+        ["01", "POR", "PORTA", "Porta central do ambiente"]
     ]
 }

@@ -69,9 +69,11 @@ class ConnectionBT():
         for _ in range(20):
             try:
                 self._sp.write(b'J')
+                print('.', end='')
                 time.sleep(1)
             except:
                 break
+            print('.')
 
 if __name__ == '__main__':
     

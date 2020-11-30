@@ -80,11 +80,14 @@ if __name__ == '__main__':
         cbt.remove_sensors()
         
         if cbt.connect_sensors():
+            print('Connected')
             data = cbt.get_data()
             
             if data == False:
+                print('No data received')
                 continue
             elif data == True:
+                print('Invalid data')
                 cbt.send_confirmation()
                 cbt.remove_sensors()
             else:

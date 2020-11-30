@@ -13,6 +13,7 @@ Created on Thu Nov 26 11:30:13 2020
 """
 
 import dbmanager as dbm
+import time
 
 class DBsync():
     
@@ -40,4 +41,7 @@ if __name__ == '__main__':
     
     dbs = DBsync()
     
-    dbs.syncDB()
+    while(True):
+        dbs.syncDB()
+        time.sleep(60)
+        

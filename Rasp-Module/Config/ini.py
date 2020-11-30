@@ -16,19 +16,20 @@ class ConnectionBT():
         
         #Attributes
         self._btctl = bluetoothctl.Bluetoothctl()
+        self._btctl.start_scan()
         self._btctl.sp_init('00:18:E4:40:00:06')
         self._sp = None
         
     def remove_sensors(self):
         try:
             self._btctl.remove('00:18:E4:40:00:06')
+            print('Disconnected')
         except:
             pass
         
     def connect_sensors(self):
         
         try:
-            self._btctl.start_scan()
             self._btctl.pair('00:18:E4:40:00:06','0000')
             self._sp = serial.Serial(port='/dev/rfcomm0', baudrate=9600, bytesize=8, timeout=10, stopbits=serial.STOPBITS_ONE)
             self._sp.readline().decode("utf-8")
@@ -52,7 +53,6 @@ class ConnectionBT():
                 bt_output = sp_txt.replace('\r\n','').split(':')
                 bt_output[1:4] = map(int,bt_output[1:4])
                 bt_output[4] = float(bt_output[4])
-                print(f"data: {bt_output}")
             except:
                 bt_output = ''
             i+=1
@@ -65,15 +65,13 @@ class ConnectionBT():
     def send_confirmation(self):
         
         #msg = self._btctl.parse_device_info('J')
-        print('Sending J')
         self._sp.write(b'J')
         for _ in range(10):
             try:
                 self._sp.write(b'')
-                print('.', end='')
             except:
                 break
-        print('.')
+        print('Sensor: Sleep')
 
 if __name__ == '__main__':
     

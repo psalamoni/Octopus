@@ -68,12 +68,12 @@ class ConnectionBT():
         print('Sending J')
         for _ in range(20):
             try:
-                self._sp.write(b'J')
+                self._sp.write(b'J\r\n')
                 print('.', end='')
                 time.sleep(1)
             except:
                 break
-            print('.')
+            print('.blue')
 
 if __name__ == '__main__':
     
